@@ -40,13 +40,13 @@ names.sort()
 
 # Create the frames
 frames = []
-imgs = [str(x) + ".png" for x in names]
+imgs = [save_imgs_url + str(x) + ".png" for x in names]
 for i in imgs:
     new_frame = Image.open(i)
     frames.append(new_frame)
 
 # Save into a GIF file that loops forever
-frames[0].save(save_imgs_url+'png_to_gif.gif', format='GIF',
+frames[0].save(save_imgs_url+'pdfs_evolution_gif.gif', format='GIF',
                append_images=frames[1:],
                save_all=True,
                duration=100, loop=0)
