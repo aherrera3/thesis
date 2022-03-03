@@ -16,7 +16,7 @@ from PIL import Image
 sns.set_style("darkgrid")
 
 output_directory_url = "/opt/qcdnum-17-01-14/output/"   # url of the directory where the output files of qcdnum script are stored.
-save_imgs_url = "imgs/"
+save_imgs_url = "/home/angelica/Downloads/thesis/imgs/python/"
 
 names = []
 
