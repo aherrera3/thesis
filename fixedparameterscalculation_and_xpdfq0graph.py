@@ -34,9 +34,10 @@ A_dbar, B_dbar, C_dbar, D_dbar, F_dbar = 0.13, -0.34, 24, 40, 0.072
 A_ubar, B_ubar, C_ubar, D_ubar, F_ubar = A_dbar, B_dbar, 11, 20, F_dbar
 """
 
-# -----------------------------------------------------------------------------------------    
-# ---------------------------PARAMETERS CALCULATIONS---------------------------------------  
-# -----------------------------------------------------------------------------------------   
+# -----------------------------------------------------------------------------------------------------------------------------------    
+# -----------------------------------------PARAMETERS CALCULATIONS-------------------------------------------------------------------  
+# -----------------------------------------------------------------------------------------------------------------------------------   
+
 # A_uv calculation
 
 # integral equivalents
@@ -52,39 +53,30 @@ def I3 (B_i, C_i):
 def I4 (B_i, C_i):
 	return I1 (B_i, C_i) * ( (ss.polygamma(0, B_i) - ss.polygamma(0, B_i+C_i+1))**2 + (ss.polygamma(1, B_i) - ss.polygamma(1, B_i+C_i+1)) )
 
+def I1_i (B_i, C_i): # = I1(B_i+1, C_i)
+	return I1(B_i+1, C_i)
 
-A_uv = 2 / (I1 (B_uv, C_uv) + E_uv*I2 (B_uv, C_uv) + F_uv*I3 (B_uv, C_uv) + G_uv*I4 (B_uv, C_uv))
-print("A_uv: ", A_uv)
-
-
-# A_dv calculation
-A_dv = 1 / (I1(B_dv, C_dv))
-print("A_dv: ", A_dv)
-
-
-# Ag calculation
-
-# integrales
-def I1_i (B_i, C_i):
-	return math.gamma(B_i+1) * math.gamma(C_i+1) / math.gamma(B_i+C_i+2)
-
-def I2_i (B_i, C_i):
+def I2_i (B_i, C_i):  
 	return I1_i (B_i, C_i) * (ss.polygamma(0, B_i+1) - ss.polygamma(0, B_i+C_i+2))   #(sympy.harmonic(B_i)-sympy.harmonic(B_i+C_i+1)) 
 							  # domde ss.polygamma(0, B_i+1) = sympy.harmonic(B_i) cuando B_i > 0. Había un problema cuando B_i <0 (entonces wolfram esta mal?), por ende decido cambiar a polygamma function.
 def I3_i (B_i, C_i):
 	return I1_i (B_i, C_i) * ( (ss.polygamma(0, B_i+1) - ss.polygamma(0, B_i+C_i+2))**2 - ss.polygamma(1, B_i+C_i+2) + ss.polygamma(1, B_i+1) )     # T3 = T1 * ( (sympy.harmonic(B_i)-sympy.harmonic(B_i+C_i+1))**2 - ... )
 
-def I4_i (B_i, C_i):
-	return I1_i (B_i+1, C_i)
-
 def I5_i (B_i, C_i):
 	return I1_i (B_i+2, C_i)
 
-# evaluo
+A_uv = 2 / (I1 (B_uv, C_uv) + E_uv*I2 (B_uv, C_uv) + F_uv*I3 (B_uv, C_uv) + G_uv*I4 (B_uv, C_uv))
+print("A_uv: ", A_uv)
+
+# A_dv calculation
+A_dv = 1 / (I1(B_dv, C_dv))
+print("A_dv: ", A_dv)
+
+# Ag calculation
 I1_uv, I1_dv, I1_g, I1_ubar, I1_dbar  =  I1_i (B_uv, C_uv), I1_i (B_dv, C_dv), I1_i (B_g, C_g), I1_i (B_ubar, C_ubar), I1_i (B_dbar, C_dbar)
 I2_uv, I2_ubar, I2_dbar, I2_g = I2_i (B_uv, C_uv), I2_i (B_ubar, C_ubar), I2_i (B_dbar, C_dbar), I2_i (B_g, C_g)
 I3_uv, I3_g = I3_i (B_uv, C_uv), I3_i (B_g, C_g)
-I4_ubar, I4_dbar = I4_i (B_ubar, C_ubar), I4_i (B_dbar, C_dbar)
+I4_ubar, I4_dbar = I2 (B_ubar, C_ubar), I2 (B_dbar, C_dbar)
 I5_uv = I5_i (B_uv, C_uv)
 
 A_g = (1 - (A_uv*(I1_uv + E_uv*I5_uv + F_uv*I2_uv + G_uv*I3_uv) + A_dv*I1_dv + 2*A_ubar*(I1_ubar + D_ubar*I4_ubar + F_ubar*I2_ubar)
@@ -92,9 +84,9 @@ A_g = (1 - (A_uv*(I1_uv + E_uv*I5_uv + F_uv*I2_uv + G_uv*I3_uv) + A_dv*I1_dv + 2
 print("A_g: ", A_g)
 
 
-# -------------------------------------------------------------------------------------------------------    
-# -------------------------------------xPDFS GRAPHS------------------------------------------------------
-# -------------------------------------------------------------------------------------------------------   
+# ------------------------------------------------------------------------------------------------------------------------------    
+# -----------------------------------------------xPDFS GRAPHS-------------------------------------------------------------------
+# ------------------------------------------------------------------------------------------------------------------------------   
 x = np.linspace(10**(-3.5), 10**(0), 1000)
 
 # Parton Distribution Functions (PDFs)
