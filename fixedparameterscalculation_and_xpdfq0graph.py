@@ -96,14 +96,15 @@ def x_pdf(x, A, B, C , D, E, F, G):
 x_g = x_pdf(x, A_g, B_g, C_g , 0, 0, F_g, G_g)
 x_uv, x_dv = x_pdf(x, A_uv, B_uv, C_uv , 0, E_uv, F_uv, G_uv), x_pdf(x, A_dv, B_dv, C_dv , 0, 0, 0, 0)
 x_ubar, x_dbar = x_pdf(x, A_ubar, B_ubar, C_ubar , D_ubar, 0, F_ubar, 0), x_pdf(x, A_dbar, B_dbar, C_dbar , D_dbar, 0, F_dbar, 0)
-x_qv = x_uv + x_dv   		# pdf for valence quarks (x_uv + x_dv) 
-x_Sigma = x_uv + x_dv + 2*x_ubar + 2*(1+gamma_s)*x_dbar     # ordenar codigo! Esto ya estaba arriba, poner las x_g ... arriba para eficiencia
+x_qv = x_uv + x_dv   		# pdf for the sum of valence quarks pdfs
+x_qs = x_ubar + x_dbar  # pdf for the sum of sea quarks pdfs
+x_Sigma = x_uv + x_dv + 2*x_ubar + 2*(1+gamma_s)*x_dbar   
 
 print("valores iniciales x_uv: ", x_uv[0], "x_dv: ", x_dv[0], "x_ubar: ", x_ubar[0], "x_dbar: ", x_dbar[0], "x_g: ", x_g[0])
 
 # converting to pd.DataFrames for graph in seaborn. And for convert easily into .csv
 x_q = pd.DataFrame({'x$u_{v}$': x_uv, 'x$d_{v}$': x_dv, 'x$\\bar{u}$': x_ubar, 'x$\\bar{d}$': x_dbar}, index=x)
-x_qv = pd.DataFrame({'x$q_{v}$': x_qv}, index=x)
+x_qv = pd.DataFrame({'x$q_{v}$': x_qv, 'x$q_{s}$': x_qs}, index=x)
 x_g = pd.DataFrame({'xg': x_g}, index=x)
 x_Sigma =  pd.DataFrame({'x$\\Sigma$': x_Sigma}, index=x)    # sum of all quark momentums
 print(x_q)
@@ -118,8 +119,8 @@ qv_graph = sns.lineplot(ax=axes[0,1], data=x_qv)
 sigma_graph = sns.lineplot(ax=axes[1,0], data=x_Sigma)
 g_graph = sns.lineplot(ax=axes[1,1], data=x_g)
 q_graph.set(xlabel = 'x', title='Quarks xPDFs')
-qv_graph.set(xlabel = 'x', title='ValenceQuarks xPDFs')
-sigma_graph.set(xlabel = 'x', title='Sigma xPDFs')
+qv_graph.set(xlabel = 'x', title='Valence and Sea Quarks xPDFs')
+sigma_graph.set(xlabel = 'x', title='Sum of Quarks xPDFs')
 g_graph.set(xlabel = 'x', title='Gluon xPDFs')
 #q_graph.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["$5.24^{-4}$", "$10^{-4}$", "$10^{-3}$", "$10^{-2}$", "$10^{-1}$", "$10^{0}$"])
 #qv_graph.set_xticks([0, 0.2, 0.4, 0.6, 0.8, 1], ["$5.24^{-4}$", "$10^{-4}$", "$10^{-3}$", "$10^{-2}$", "$10^{-1}$", "$10^{0}$"])
