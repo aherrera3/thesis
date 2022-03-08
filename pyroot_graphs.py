@@ -3,14 +3,30 @@ import glob
 import pandas as pd
 import numpy as np
 from PIL import Image
+import pdf_parametrizations as pp # the pdf functions
 
 pdf_directory_url = "/opt/qcdnum-17-01-14/output/"
 imgs_url = "/home/angelica/Downloads/thesis/imgs/root/"
 names = []
 
+
+# PDFs
+def x_uv(x):
+  A, B, C, D, E, F, G = pp.A_uv, pp.B_uv, pp.C_uv , 0, pp.E_uv, pp.F_uv, pp.G_uv
+  return A*x**B * (1-x)**C * (1 + D*x + E*x**2 + F*np.log(x) + G*np.log(x)**2) 
+def x_dv(x):
+  A, B, C, D, E, F, G = 0, pp.B_dv, pp.C_dv, 0, 0 , 0, 0
+  return A*x**B * (1-x)**C * (1 + D*x + E*x**2 + F*np.log(x) + G*np.log(x)**2) 
+
+
+# for quarks:
 c1 = ROOT.TCanvas('c1', 'quarks PDFs', 200, 10, 700, 500)
-c1.cd()
 c1.SetGrid()
+
+# for the gluon:
+#c2 = ROOT.TCanvas('c2', 'gluon PDF', 200, 10, 700, 500)
+#c2.SetGrid()
+
 
 # for each pdf file
 for csv in glob.glob(pdf_directory_url + "*.csv"):
@@ -20,7 +36,7 @@ for csv in glob.glob(pdf_directory_url + "*.csv"):
   # to get the q energy scale
   array = csv.split("_")
   q = float(array[2][:-4])
-  names.append(int(q*10))
+  names.append(int(q*100))
   
   # the pdfs
   x = np.asarray(dataset.iloc[:,0])
@@ -31,31 +47,66 @@ for csv in glob.glob(pdf_directory_url + "*.csv"):
 
   xuv, xdv, xubar, xdbar = pdfs[0], pdfs[1], pdfs[2], pdfs[3]
 
-  # Graphs
-  xuv_graph = ROOT.TGraph(number_lines, x, xuv)
-  xuv_graph.SetLineColor(3)             # TAttLine Class attributes: https://root.cern.ch/doc/master/classTAttLine.html
-  xuv_graph.SetTitle(" ")
-  xuv_graph.GetXaxis().SetTitle("x")
-  xuv_graph.GetYaxis().SetTitle(r"xq")
-  xuv_graph.GetYaxis().SetRangeUser(-0.3,0.8)
-  #xuv_graph.GetXaxis().SetRangeUser(0,1)
 
+  # TGraphs for quarks
+  xuv_graph = ROOT.TGraph(number_lines, x, xuv)
   xdv_graph = ROOT.TGraph(number_lines, x, xdv)
-  xdv_graph.SetLineColor(4) 
   xubar_graph = ROOT.TGraph(number_lines, x, xubar)
-  xubar_graph.SetLineColor(5) 
   xdbar_graph = ROOT.TGraph(number_lines, x, xdbar)
+  
+  xuv_fitting = ROOT.TGraph(number_lines, x, xuv)
+
+  # line color
+  xuv_graph.SetLineColor(3)             # TAttLine Class attributes: https://root.cern.ch/doc/master/classTAttLine.html
+  xdv_graph.SetLineColor(4) 
   xdbar_graph.SetLineColor(2)
 
-  # Draw this graph with its current attributes
-  xuv_graph.Draw("ACP")   # in parenthesis are the options (see: https://root.cern.ch/doc/master/classTGraphPainter.html)
+  # least square fit
+  xuv_fitting.LeastSquareFit(1, x_uv(x))  #6, [pp.A_uv, pp.B_uv, pp.C_uv, pp.E_uv, pp.F_uv, pp.G_uv]
+
+  # converting from python functions to TF1 ROOT classes
+  TF1_xuv = ROOT.TF1("TF1_xuv", "[0]*TMath::Power(x, [1]) * TMath::Power(1-x, [2]) * (1 + [3]*x + [4]*TMath::Power(x, 2) + [5]*TMath::Log(x) + [6]* TMath::Power(TMath::Log(x), 2) )", 0, 1)   # 0, 1: x range
+  #pp.x, pp.A_uv, pp.B_uv, pp.C_uv , 0, pp.E_uv, pp.F_uv, pp.G_uv
+  #TF1_xuv.SetParameter(0, *pp.x)
+  TF1_xuv.SetParameter(0, pp.A_uv)
+  TF1_xuv.SetParameter(1, pp.B_uv)
+  TF1_xuv.SetParameter(2, pp.C_uv)
+  TF1_xuv.SetParameter(3, 0)
+  TF1_xuv.SetParameter(4, pp.E_uv)
+  TF1_xuv.SetParameter(5, pp.F_uv)
+  TF1_xuv.SetParameter(6, pp.G_uv)
+
+  # chi square
+  xuv_chisquare = xuv_graph.Chisquare(TF1_xuv)
+  print("xuv_chisquare = ", xuv_chisquare)
+
+  # Some attributes
+  xuv_graph.SetTitle("Quarks PDFs at Q^{2} = " + str(q) + " GeV^{2}")
+  xuv_graph.GetXaxis().SetTitle("x")
+  xuv_graph.GetYaxis().SetTitle("x quarks")
+  xuv_graph.GetYaxis().SetRangeUser(-0.3,0.8)
+
+  # Draw these graphs with their current attributes
+  xuv_graph.Draw("ACP")      # in parenthesis are the options (see: https://root.cern.ch/doc/master/classTGraphPainter.html)
   xdv_graph.Draw("pl same")
   xubar_graph.Draw("pl same")
   xdbar_graph.Draw("pl same")
+  xuv_fitting.Draw("pl same")
+
+  # legend class
+  legend = ROOT.TLegend(0.88, 0.7, 0.7, 0.88)    # x_derecha, y_abajo, x_izquierda, y_arriba --> como plano cartesiano
+  #legend.SetHeader("The Legend Title","C")
+  legend.AddEntry(xuv_graph,"xu_{v}")
+  legend.AddEntry(xdv_graph,"xd_{v}")
+  legend.AddEntry(xubar_graph,"x#bar{u}")
+  legend.AddEntry(xdbar_graph,"x#bar{d}")
+  legend.Draw()
 
   # updating the canvas
   c1.Update()
-  c1.SaveAs(imgs_url + str(int(q*10)) + ".png")
+  c1.SaveAs(imgs_url + str(int(q*100)) + ".png")
+
+  # for the gluon:
 
 
 # Creates the gifs with the output imgs

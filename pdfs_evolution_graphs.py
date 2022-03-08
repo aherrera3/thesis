@@ -16,7 +16,7 @@ from PIL import Image
 sns.set_style("darkgrid")
 
 output_directory_url = "/opt/qcdnum-17-01-14/output/"   # url of the directory where the output files of qcdnum script are stored.
-save_imgs_url = "/home/angelica/Downloads/thesis/imgs/python/"
+save_imgs_url = "/home/angelica/Documents/thesis/imgs/python/"
 
 names = []
 
@@ -32,8 +32,8 @@ for csv in glob.glob(output_directory_url + "*.csv"):
   names.append(int(q*10))
 
   plt.figure()
-  sns.lineplot(data=dataset.iloc[:,:-1])   # without gluons graph
-  plt.ylim((-1, 1.4))
+  sns.lineplot(data=dataset.iloc[:,:])   # without gluons graph
+  plt.ylim((-0.4, 1))
   plt.savefig(save_imgs_url + str(int(q*10)) + ".png")
 
 names.sort()
