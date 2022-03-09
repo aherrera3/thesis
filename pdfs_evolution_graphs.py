@@ -12,13 +12,17 @@ import seaborn as sns
 import pandas as pd
 import glob
 from PIL import Image
+import os
 
-sns.set_style("darkgrid")
+# to delete the old images
+os.system("rm imgs/python/*.png imgs/python/*.gif")
 
 output_directory_url = "/opt/qcdnum-17-01-14/output/"   # url of the directory where the output files of qcdnum script are stored.
 save_imgs_url = "/home/angelica/Documents/thesis/imgs/python/"
 
 names = []
+
+sns.set_style("darkgrid")
 
 # for each .csv output file cotained in output_directory_url.
 for csv in glob.glob(output_directory_url + "*.csv"):
@@ -29,12 +33,12 @@ for csv in glob.glob(output_directory_url + "*.csv"):
   dataset = pd.read_csv(csv, delimiter=" ")
   dataset = dataset.set_index("x")
 
-  names.append(int(q*10))
+  names.append(int(q*100))
 
   plt.figure()
-  sns.lineplot(data=dataset.iloc[:,:])   # without gluons graph
-  plt.ylim((-0.4, 1))
-  plt.savefig(save_imgs_url + str(int(q*10)) + ".png")
+  sns.lineplot(data=dataset.iloc[:,:])   #, palette=['orange']
+  plt.ylim((-0.1, 3.2))
+  plt.savefig(save_imgs_url + str(int(q*100)) + ".png")
 
 names.sort()
 

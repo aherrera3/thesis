@@ -100,15 +100,12 @@ x_qv = x_uv + x_dv   		# pdf for the sum of valence quarks pdfs
 x_qs = x_ubar + x_dbar  # pdf for the sum of sea quarks pdfs
 x_Sigma = x_uv + x_dv + 2*x_ubar + 2*(1+gamma_s)*x_dbar   
 
-#print("valores iniciales x_uv: ", x_uv[0], "x_dv: ", x_dv[0], "x_ubar: ", x_ubar[0], "x_dbar: ", x_dbar[0], "x_g: ", x_g[0])
+with open("data.txt", "w") as f:
+	f.write("x uv dv \n")
+	for i in range(10):
+		line = str(x[i]) + " " + str(x_uv[i]) + " " + str(x_dv[i]) +"\n"
+		f.write(line)
 
-print("algunos valores son: \n para x=5.2427e-4: \n xg: ",  x_pdf(x[0], A_g, B_g, C_g , 0, 0, F_g, G_g), " xuv: ", x_pdf(x[0], A_uv, B_uv, C_uv , 0, E_uv, F_uv, G_uv),
-				" xdv: ", x_pdf(x[0], A_dv, B_dv, C_dv , 0, 0, 0, 0), " xubar: ", x_pdf(x[0], A_ubar, B_ubar, C_ubar , D_ubar, 0, F_ubar, 0), " xdbar: ", x_pdf(x[0], A_dbar, B_dbar, C_dbar , D_dbar, 0, F_dbar, 0) )
-
-#print("para x=0.01: \n xg: ",  x_pdf(0.01, A_g, B_g, C_g , 0, 0, F_g, G_g), " xuv: ", x_pdf(0.01, A_uv, B_uv, C_uv , 0, E_uv, F_uv, G_uv),
-#				" xdv: ", x_pdf(0.01, A_dv, B_dv, C_dv , 0, 0, 0, 0), " xubar: ", x_pdf(0.01, A_ubar, B_ubar, C_ubar , D_ubar, 0, F_ubar, 0), " xdbar: ", x_pdf(0.01, A_dbar, B_dbar, C_dbar , D_dbar, 0, F_dbar, 0) )
-
-#print(min(x_ubar), min(x_dbar), min(x_dv), min(x_uv), min(x_g))
 
 # converting to pd.DataFrames for graph in seaborn. And for convert easily into .csv
 x_q = pd.DataFrame({'x$u_{v}$': x_uv, 'x$d_{v}$': x_dv, 'x$\\bar{u}$': x_ubar, 'x$\\bar{d}$': x_dbar}, index=x)
