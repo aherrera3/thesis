@@ -43,7 +43,7 @@ for csv in glob.glob(output_directory_url + "*.csv"):
   #lp.text(10, 10, "I am Adding Text To The Plot", fontdict=dict(color='black', fontsize=10))
   plt.ylabel("$x$pdf")
   plt.xlabel("$x$")
-  plt.title(f"$Q^2$ = {q:.1e} $GeV^2$")
+  plt.title(f"$Q^2$ = {q:.2e} $GeV^2$")
   plt.ylim((0.0, 1.0))
   plt.xlim((10e-3, 1))
   plt.savefig(save_imgs_url + str(int(q*100)) + ".png")
