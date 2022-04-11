@@ -105,11 +105,13 @@ x_qv = x_uv + x_dv   		# pdf for the sum of valence quarks pdfs
 x_qs = x_ubar + x_dbar  # pdf for the sum of sea quarks pdfs
 x_Sigma = x_uv + x_dv + 2*x_ubar + 2*(1+gamma_s)*x_dbar   
 
+"""
 with open("data.txt", "w") as f:
 	f.write("x uv dv \n")
 	for i in range(10):
 		line = str(x[i]) + " " + str(x_uv[i]) + " " + str(x_dv[i]) +"\n"
 		f.write(line)
+"""
 
 # converting to pd.DataFrames for graph in seaborn. And for convert easily into .csv
 x_q = pd.DataFrame({'x$u_{v}$': x_uv, 'x$d_{v}$': x_dv, 'x$\\bar{u}$': x_ubar, 'x$\\bar{d}$': x_dbar}, index=x)
