@@ -24,6 +24,7 @@ save_imgs_url = "/home/angelica/Documents/thesis/imgs/python/"
 
 names = []
 
+plt.rcParams.update({"font.size":13})
 sns.set_style("darkgrid")
 
 # for each .csv output file cotained in output_directory_url.
@@ -46,7 +47,7 @@ for csv in glob.glob(output_directory_url + "*.csv"):
   plt.title(f"$Q^2$ = {q:.2e} $GeV^2$")
   plt.ylim((0.0, 1.0))
   plt.xlim((10e-3, 1))
-  plt.savefig(save_imgs_url + str(int(q*100)) + ".png")
+  plt.savefig(save_imgs_url + str(int(q*100)) + ".png", dpi=300)
 
 names.sort()
 
