@@ -39,7 +39,7 @@ for csv in glob.glob(output_directory_url + "*.csv"):
   names.append(int(q*100))
 
   plt.figure()
-  lp = sns.lineplot(data=dataset.iloc[:,:])   #, palette=['orange']
+  lp = sns.scatterplot(data=dataset.iloc[:,:])   #, palette=['orange']
   lp.set(xscale="log")
   #lp.text(10, 10, "I am Adding Text To The Plot", fontdict=dict(color='black', fontsize=10))
   plt.ylabel("$x$pdf")
